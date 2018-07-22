@@ -169,3 +169,8 @@ char *acosNvramConfig_get(const char *key) {
 char *acosNvramConfig_set(const char *key) {
         return nvram_set(key);
 }
+
+char *acosNvramConfig_read(char *key, char *buffer, int max_len) {
+        strncpy(buffer, nvram_get(key), max_len);
+        return buffer;
+}
