@@ -21,7 +21,7 @@ static int ini_handler(void *user, const char *section, const char *name,const c
     char **kv;
     char **new_kv;
     int i;
-    
+
     if(NULL == user || NULL == section || NULL == name || NULL == value)
     {
         DEBUG_PRINTF("bad parameter to ini_handler\n");
@@ -33,7 +33,7 @@ static int ini_handler(void *user, const char *section, const char *name,const c
         LOG_PRINTF("kv is NULL\n");
         return 0;
     }
-    
+
     DEBUG_PRINTF("kv_count: %d, key_value_pair_len: %d\n", kv_count,key_value_pair_len);
     if(kv_count >= key_value_pair_len)
     {
@@ -56,7 +56,7 @@ static int ini_handler(void *user, const char *section, const char *name,const c
     DEBUG_PRINTF("Got %s:%s\n",name,value);
     kv[kv_count++]=strdup(name);
     kv[kv_count++]=strdup(value);
-    
+
     return 1;
 }
 
@@ -73,7 +73,7 @@ void initialize_ini(void)
         LOG_PRINTF("Failed to allocate memory for key value array. Terminating.\n");
         exit(1);
     }
-    
+
     ret = ini_parse(INI_FILE_PATH,ini_handler,(void *)&key_value_pairs);
     if (0 != ret)
     {
@@ -86,9 +86,9 @@ void initialize_ini(void)
     {
         DEBUG_PRINTF("ret from ini_parse was: %d\n",ret);
     }
-    
+
     return;
-    
+
 }
 
 void end(void)
@@ -100,7 +100,7 @@ void end(void)
     }
     free(key_value_pairs);
     key_value_pairs=NULL;
-    
+
     return;
 }
 
@@ -133,4 +133,29 @@ char *nvram_get(const char *key)
     return ret;
 }
 
+int nvram_set(const char *name, const char *value) {
+    LOG_PRINTF("nvram_set('%s','%s');\n",name,value);
+    int i;
+    int found=0;
+    char *ret;
+    for(i=0;i<kv_count;i+=2)
+    {
+        if(strcmp(name,key_value_pairs[i]) == 0)
+        {
+            LOG_PRINTF("Updating existing value: %s=%s\n",name,key_value_pairs[i+1]);
+            found = 1;
+            key_value_pairs[i+1] = value;
+            break;
+        }
+    }
 
+    ret = NULL;
+    if(!found)
+    {
+            LOG_PRINTF( RED_ON"Setting new value, %s=%s\n"RED_OFF,name,value);
+            key_value_pairs[i + 2] = name;
+            key_value_pairs[i + 3] = value;
+    }
+
+        return 0;
+}
