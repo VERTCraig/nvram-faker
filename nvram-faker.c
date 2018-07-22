@@ -159,3 +159,13 @@ int nvram_set(const char *name, const char *value) {
 
         return 0;
 }
+
+// acosNvramConfig_* are also needed for some devices
+
+char *acosNvramConfig_get(const char *key) {
+        return nvram_get(key);
+}
+
+char *acosNvramConfig_set(const char *key) {
+        return nvram_set(key);
+}
